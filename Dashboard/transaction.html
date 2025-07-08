@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transaksi Tiket Travelling</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 6px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .actions button {
+      background: #28a745;
+    }
+    .actions .delete-btn {
+      background: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Transaksi Tiket Travelling</h1>
+
+  <div id="form-section">
+    <div class="form-group">
+      <label for="nama">Nama Penumpang:</label>
+      <input type="text" id="nama" required />
+    </div>
+    <div class="form-group">
+      <label for="tujuan">Tujuan:</label>
+      <input type="text" id="tujuan" required />
+    </div>
+    <div class="form-group">
+      <label for="tanggal">Tanggal Keberangkatan:</label>
+      <input type="date" id="tanggal" required />
+    </div>
+    <div class="form-group">
+      <label for="harga">Harga Tiket (Rp):</label>
+      <input type="number" id="harga" required />
+    </div>
+    <button onclick="simpanTiket()">Simpan Tiket</button>
+    <button onclick="resetForm()">Reset</button>
+  </div>
+
+  <table id="tiketTable">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Tujuan</th>
+        <th>Tanggal</th>
+        <th>Harga</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let dataTiket = [];
+    let editIndex = -1;
+
+    function simpanTiket() {
+      const nama = document.getElementById('nama').value;
+      const tujuan = document.getElementById('tujuan').value;
+      const tanggal = document.getElementById('tanggal').value;
+      const harga = document.getElementById('harga').value;
+
+      if (!nama || !tujuan || !tanggal || !harga) {
+        alert('Semua kolom harus diisi!');
+        return;
+      }
+
+      const tiket = { nama, tujuan, tanggal, harga };
+
+      if (editIndex === -1) {
+        dataTiket.push(tiket);
+      } else {
+        dataTiket[editIndex] = tiket;
+        editIndex = -1;
+      }
+
+      renderTabel();
+      resetForm();
+    }
+
+    function renderTabel() {
+      const tbody = document.querySelector('#tiketTable tbody');
+      tbody.innerHTML = '';
+
+      dataTiket.forEach((t, index) => {
+        const row = `<tr>
+          <td>${t.nama}</td>
+          <td>${t.tujuan}</td>
+          <td>${t.tanggal}</td>
+          <td>Rp ${parseInt(t.harga).toLocaleString()}</td>
+          <td class="actions">
+            <button onclick="editTiket(${index})">Edit</button>
+            <button class="delete-btn" onclick="hapusTiket(${index})">Hapus</button>
+          </td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function editTiket(index) {
+      const t = dataTiket[index];
+      document.getElementById('nama').value = t.nama;
+      document.getElementById('tujuan').value = t.tujuan;
+      document.getElementById('tanggal').value = t.tanggal;
+      document.getElementById('harga').value = t.harga;
+      editIndex = index;
+    }
+
+    function hapusTiket(index) {
+      if (confirm('Yakin ingin menghapus tiket ini?')) {
+        dataTiket.splice(index, 1);
+        renderTabel();
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('nama').value = '';
+      document.getElementById('tujuan').value = '';
+      document.getElementById('tanggal').value = '';
+      document.getElementById('harga').value = '';
+      editIndex = -1;
+    }
+  </script>
+
+</body>
+</html>
